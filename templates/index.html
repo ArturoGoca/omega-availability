@@ -1,0 +1,92 @@
+
+{% extends "layout.html" %}
+{% block title %}Omega Availability{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form action="{{ url_for('index') }}" method="get" class="form">
+    <label for="q" class="muted">Número de ensamble (Item):</label>
+    <input type="text" id="q" name="q" placeholder="Ej. TC00001X012" value="{{ q|default('') }}" autocomplete="off"/>
+    <button type="submit">Buscar</button>
+    {% if q %}
+      <a class="ghost" href="{{ url_for('export', q=q) }}">Exportar CSV</a>
+    {% endif %}
+  </form>
+  <p class="muted">Escribe el número de ensamble para mostrar disponibilidad de componentes <strong>On Hand</strong> </p>
+</div>
+
+{% if q %}
+  <div class="card">
+    <h2>Componentes para: <span class="badge">{{ q }}</span></h2>
+    {% if results|length == 0 %}
+      <p>No se encontraron componentes para el ensamble <strong>{{ q }}</strong>.</p>
+    {% else %}
+      <div class="table-wrap">
+        {% if best_ship_date %}
+  <div class="callout ok">
+    For this assembly, our best ship date will be 
+    <strong>{{ best_ship_date.strftime('%B %d, %Y') }}</strong>.
+  </div>
+{% else %}
+  {% set hay_faltantes = results|selectattr('faltante', 'gt', 0)|list|length > 0 %}
+  {% if hay_faltantes %}
+    <div class="callout warn">
+      Some components are missing lead times. Add CTLT to see a best ship date.
+    </div>
+  {% endif %}
+{% endif %}
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Component Description</th>
+        <th>Qty Per</th>
+        <th>On Hand</th>
+        <th>Faltante</th>
+        <th>LT (días)</th>
+        <th>Días totales</th>
+        <th>Fecha estimada</th>
+        <th>Make/Buy</th>
+        <th>Planner</th>
+        <th>Buyer</th>
+        <th>Supplier</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {% for row in results %}
+      {% set cls =
+        'ok' if row.on_hand > row.qty_per
+        else ('low' if 0 < row.on_hand <= row.qty_per
+        else ('zero' if row.on_hand == 0
+        else ''))
+      %}
+      {% if row.faltante > 0 and row.lead_time_days is none %}
+        {% set cls = 'needs-lt' %}
+      {% endif %}
+
+      <tr class="{{ cls }}">
+        <td>{{ row.component }}</td>
+        <td>{{ row.component_description }}</td>
+        <td>{{ row.qty_per }}</td>
+        <td>{{ row.on_hand }}</td>
+        <td>{{ '{:g}'.format(row.faltante) }}</td>
+        <td>{{ row.lead_time_days if row.lead_time_days is not none else '—' }}</td>
+        <td>{{ row.dias_totales if row.dias_totales is not none else '—' }}</td>
+        <td>{{ row.fecha_estimada if row.fecha_estimada is not none else '—' }}</td>
+        <td>{{ row.make_or_buy or '—' }}</td>
+        <td>{{ row.planner or '—' }}</td>
+        <td>{{ row.buyer or '—' }}</td>
+        <td>{{ row.primary_supplier or '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+      <p class="muted legend">
+        Colores: <span class="pill ok">suficiente</span> · <span class="pill low">bajo</span> · <span class="pill zero">sin stock</span>
+      </p>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

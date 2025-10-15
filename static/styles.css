@@ -1,0 +1,49 @@
+
+:root {
+  --bg: #1c1f2e;
+  --card: #0d0d0e;
+  --text: #f0f0f0;
+  --muted: #ffffff;
+  --border: #2a2f36;
+  --accent: #7c5cff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+.container { max-width: 1380px; margin: 0 auto; padding: 20px; }
+.header, .footer { padding-top: 8px; padding-bottom: 8px; }
+h1 { font-size: 24px; margin: 0 0 4px; color: #e6e6e6;}
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 6px 30px rgba(0,0,0,.25); }
+.form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+input[type="text"] { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: #0f1216; color: var(--text); min-width: 300px; outline: none; }
+button, .ghost { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--accent); color: white; text-decoration: none; cursor: pointer; font-weight: 600; }
+.ghost { background: transparent; color: var(--text); }
+.badge { display: inline-block; background: #5c6fff; border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.muted { color: var(--muted); }
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+th { position: sticky; top: 0; background: #1c1f27; }
+.ok { background: rgba(48, 164, 108, .15); }
+.low { background: rgba(255, 171, 0, .12); }
+.zero { background: rgba(255, 99, 99, .14); }
+.pill { padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+.legend { margin-top: 8px; }
+tr.ok        { background: rgba(46, 204, 113, 0.2); }  /* suficiente stock */
+tr.low       { background: rgba(241, 196, 15, 0.2); }  /* casi justo */
+tr.zero      { background: rgba(231, 76, 60, 0.2); }   /* sin stock */
+tr.needs-lt  { background: rgba(123, 97, 255, 0.18); } /* falta LT */
+.callout {
+  margin: 10px 0 15px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+.callout.ok {
+  background: rgba(46, 204, 113, .15);
+  color: #a6e3b0;
+}
+.callout.warn {
+  background: rgba(255, 171, 0, .15);
+  color: #f5d58c;
+}
