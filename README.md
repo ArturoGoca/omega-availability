@@ -1,50 +1,38 @@
+# 🧠 Omega Availability
 
-# Omega Availability (Flask + MySQL)
+Flask web application that allows Customer Service to check the **availability of Omega assemblies**.  
+It integrates live stock data, component BOMs, and supplier lead times to estimate the **best ship date**.
 
-Estructura profesional con **templates** y **static**. Consulta un ensamble Omega y muestra sus componentes y el On Hand (agregado en SQL).
+---
 
-## Estructura
-```
-.
-├─ app.py
-├─ conexion.py
-├─ requirements.txt
-├─ templates/
-│  ├─ layout.html
-│  └─ index.html
-└─ static/
-   └─ styles.css
-```
+## 🚀 Features
+✅ Query assemblies by item number  
+✅ See component descriptions, quantities, and on-hand levels  
+✅ Detect shortages automatically  
+✅ Calculate total lead time and estimated ship date  
+✅ Export results to CSV  
 
-## Requisitos
-```
-pip install -r requirements.txt
-```
-Asegúrate que MySQL tenga las tablas:
-- `bom_omega (item, item_description, component, component_description, qty_per)`
-- `existencias_1 (item_number, qty, ...)`
+---
 
-## Variables de entorno (opcional)
-```
-set DB_HOST=127.0.0.1
-set DB_USER=root
-set DB_PASS=
-set DB_NAME=omega
-```
+## 🛠️ Tech Stack
+| Layer | Technology |
+|-------|-------------|
+| Backend | Python (Flask) |
+| Frontend | HTML + CSS (Dark Theme) |
+| Database | MySQL / phpMyAdmin |
+| Version Control | Git + GitHub |
+| Environment | XAMPP |
 
-## Ejecutar
-```
+---
+
+## ⚙️ How to Run Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/ArturoGoca/omega-availability.git
+
+# Move into the folder
+cd omega-availability
+
+# Run the Flask app
 python app.py
-```
-Abre `http://localhost:8000` y busca un `Item` (ej. `TC00001X012`).
-
-## Exportar
-Botón **Exportar CSV** genera un archivo con los componentes y su on hand.
-
-## Notas
-- El agregado de on hand se hace en SQL (`SUM(e.qty)` + `GROUP BY`), evitando cargar toda la tabla a memoria.
-- Para performance, agrega índices (si no los tienes):
-```
-ALTER TABLE bom_omega ADD INDEX idx_item (item), ADD INDEX idx_component (component);
-ALTER TABLE existencias_1 ADD INDEX idx_item_number (item_number);
-```
