@@ -8,7 +8,7 @@ from datetime import datetime
 # =======================
 # CONFIG
 # =======================
-SHARE = r"\\mxtolp-fs01\global\materiales\RPT\RPT OnHand.csv"   # origen (Noetix)
+SHARE = r"\\mxtolp-fs01\global\materiales\RPT\OnHand for OMEGA.csv"   # origen (Noetix)
 LOCAL_DIR = r"C:\omega\imports"
 LOCAL = os.path.join(LOCAL_DIR, "RPT_OnHand.csv")
 LOG_DIR = r"C:\omega\logs"
