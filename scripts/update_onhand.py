@@ -173,10 +173,42 @@ def main():
                            planner=TRIM(planner),
                            organization_code=TRIM(organization_code);
                 """)
-                log("Carga a STAGING completada OK. (No se hizo swap)")
+                # -------- Validación mínima antes del swap --------
+                cur.execute("SELECT COUNT(*) AS n FROM existencias_staging;")
+                row = cur.fetchone()
+                staging_rows = row["n"] if row else 0
+                if staging_rows == 0:
+                    log("ERROR: existencias_staging tiene 0 filas. Se aborta el swap por seguridad.")
+                    raise RuntimeError("Staging vacío; no se actualiza existencias_1")
+
+                log(f"Filas en STAGING listas para swap: {staging_rows}")
+
+                # -------- Swap atómico: staging -> existencias_1 --------
+                log("Haciendo swap atómico (staging <-> existencias_1)…")
+                try:
+                    with conn.cursor() as cur2:
+                        cur2.execute("START TRANSACTION;")
+                        # Dejar respaldo de la versión anterior en existencias_staging
+                        cur2.execute("""
+                            RENAME TABLE
+                            existencias_1 TO existencias_backup,
+                            existencias_staging TO existencias_1;
+                        """)
+                        # Restaurar staging como respaldo
+                        cur2.execute("RENAME TABLE existencias_backup TO existencias_staging;")
+                        cur2.execute("COMMIT;")
+                    log("Swap completado. 'existencias_1' actualizada y respaldo guardado en 'existencias_staging'.")
+                except Exception as swap_err:
+                    with conn.cursor() as cur2:
+                        cur2.execute("ROLLBACK;")
+                    log(f"ERROR en swap atómico: {swap_err}")
+                    raise
+
             except Exception as e:
                 log(f"ERROR en carga a STAGING: {e}")
                 raise
+
+
 
 if __name__ == "__main__":
     try:
